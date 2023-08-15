@@ -5,8 +5,8 @@
 */
 
 #include <Arduino.h>
-
-#include <RF24.h>
+#include <ArduinoJson.h>
+//#include <RF24.h>
 #include <SPI.h>
 
 // Pin assingments
@@ -34,16 +34,16 @@
 //Left JoyStick
 int L_X_VAL = 0;
 int L_Y_VAL = 0;
-boolean L_PIN_STATE = false;
+bool L_PIN_STATE = false;
 
 //Right JoyStick
 int R_X_VAL = 0;
 int R_Y_VAL = 0;
-boolean R_PIN_STATE = false;
+bool R_PIN_STATE = false;
 
 //Triggers
-boolean L_Trig_STATE = false;
-boolean R_Trig_STATE = false;
+bool L_Trig_STATE = false;
+bool R_Trig_STATE = false;
 
 //Pots
 int L_POT_VAL = 0;
@@ -101,8 +101,8 @@ void PrintFunc() {
     }
 }
 
-boolean PrintState = false;
-boolean readstate = false;
+bool PrintState = false;
+bool readstate = false;
 String rawdata[256] = {};
 
 //Function For Communicaton between ESP32 and ARDUINO NANO.
@@ -136,6 +136,30 @@ void SerialCommunication() {
             }
 }
 
+void Json_Serial_Communication() {
+    // Values we want to transmit
+  long timestamp = millis();
+  int value = analogRead(1);
+
+  // Print the values on the "debug" serial port
+  Serial.print("timestamp = ");
+  Serial.println(timestamp);
+  Serial.print("value = ");
+  Serial.println(value);
+  Serial.println("---");
+
+  // Create the JSON document
+  StaticJsonDocument<200> doc;
+  doc["timestamp"] = timestamp;
+  doc["value"] = value;
+
+  // Send the JSON document over the "link" serial port
+  serializeJson(doc, Serial);
+
+  // Wait
+  delay(1000);
+}
+
 void setup() {
     pinMode(L_X, INPUT);
     pinMode(L_Y, INPUT);
@@ -148,11 +172,13 @@ void setup() {
     pinMode(L_Trig, INPUT_PULLUP);
     pinMode(R_Trig, INPUT_PULLUP);
 
-    Serial.begin(115200);
+    Serial.begin(9600);
+    while (!Serial) continue;
 }
 
 void loop() {
     ReadSense();
     //PrintFunc();
-    SerialCommunication();
+    //SerialCommunication();
+    Json_Serial_Communication();
 }

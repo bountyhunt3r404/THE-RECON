@@ -1,24 +1,55 @@
 #include "Arduino.h"
 //#include <SPI.h>
+#include <ArduinoJson.h>
+
+// JSON Doc
+
+
 
 void setup() {
-    Serial.begin(115200);
-    Serial2.begin(115200);
+
+  Serial.begin(9600);
+  Serial2.begin(9600);
+  // Initialize "debug" serial port
+  // The data rate must be much higher than the "link" serial port
+  pinMode(BUILTIN_LED, OUTPUT);
+
+  while (!Serial) continue;
+
 }
 
+
 void loop() {
-  //read from port 1, send to port 0:
-  Serial2.print('S');
+  // Check if the other Arduino is transmitting
+  if (Serial2.available()) 
+  {
+    // Allocate the JSON document
+    // This one must be bigger than the sender's because it must store the strings
+    StaticJsonDocument<300> doc;
 
-  if (Serial2.available()) {
-    
-    int inByte = Serial2.read();
-    Serial.write(inByte);
-  }
+    // Read the JSON document from the "link" serial port
+    DeserializationError err = deserializeJson(doc, Serial2);
 
-  // read from port 0, send to port 1:
-  if (Serial.available()) {
-    int inByte = Serial.read();
-    Serial2.write(inByte);
+    if (err == DeserializationError::Ok)
+    {
+      // Print the values
+      // (we must use as<T>() to resolve the ambiguity)
+      digitalWrite(BUILTIN_LED, HIGH);
+      Serial.print("timestamp = ");
+      Serial.println(doc["timestamp"].as<long>());
+      Serial.print("value = ");
+      Serial.println(doc["value"].as<int>());
+    } 
+    else 
+    {
+      // Print error to the "debug" serial port
+      digitalWrite(BUILTIN_LED, LOW);
+      //Serial.print("deserializeJson() returned ");
+      //Serial.println(err.c_str());
+  
+      // Flush all bytes in the "link" serial port buffer
+      while (Serial.available() > 0)
+        Serial2.read();
+    }
   }
 }
