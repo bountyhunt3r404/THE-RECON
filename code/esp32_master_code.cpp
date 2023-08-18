@@ -25,20 +25,22 @@ void loop() {
   {
     // Allocate the JSON document
     // This one must be bigger than the sender's because it must store the strings
-    StaticJsonDocument<300> doc;
+    StaticJsonDocument<500> sensordata;
 
     // Read the JSON document from the "link" serial port
-    DeserializationError err = deserializeJson(doc, Serial2);
+    DeserializationError err = deserializeJson(sensordata, Serial2);
 
     if (err == DeserializationError::Ok)
     {
       // Print the values
       // (we must use as<T>() to resolve the ambiguity)
       digitalWrite(BUILTIN_LED, HIGH);
-      Serial.print("timestamp = ");
-      Serial.println(doc["timestamp"].as<long>());
-      Serial.print("value = ");
-      Serial.println(doc["value"].as<int>());
+      Serial.print("| L_JOY_SINGLE_READ: ");
+      Serial.print(sensordata["L_JOY_SINGLEREAD"].as<String>());
+      Serial.print("| L_JOY_MULTIPLE_READ: ");
+      Serial.print(sensordata["L_JOY_MULTIPLEREAD"].as<String>());
+      Serial.println(" |");
+      digitalWrite(BUILTIN_LED, LOW);
     } 
     else 
     {
