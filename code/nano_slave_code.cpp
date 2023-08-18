@@ -97,7 +97,8 @@ void json_over_serial_communication() {
     sensordata["R_JOY_SINGLEREAD"] = moveTitle(RJOY.singleRead());
     sensordata["R_JOY_MULTIPLEREAD"] = moveTitle(RJOY.multipleRead());
 
-    serializeJson(sensordata, Serial);
+    serializeJsonPretty(sensordata, Serial);
+    delay(1);
 }
 
     
