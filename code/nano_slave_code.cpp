@@ -92,12 +92,23 @@ void json_over_serial_communication() {
     StaticJsonDocument<500> sensordata;
 
     //Default JSON doc structure
+    //#SWICTHES
+    sensordata["L_TRIG"] = digitalRead(L_Trig);
+    sensordata["R_TRIG"] = digitalRead(R_Trig);
+    sensordata["L_JOY_BUTTON"] = digitalRead(L_PIN);
+    sensordata["R_JOY_BUTTON"] = digitalRead(R_PIN);
+
+    //#ANALOG JOTSTICK
     sensordata["L_JOY_SINGLEREAD"] = moveTitle(LJOY.singleRead());
     sensordata["L_JOY_MULTIPLEREAD"] = moveTitle(LJOY.multipleRead());
     sensordata["R_JOY_SINGLEREAD"] = moveTitle(RJOY.singleRead());
     sensordata["R_JOY_MULTIPLEREAD"] = moveTitle(RJOY.multipleRead());
 
-    serializeJsonPretty(sensordata, Serial);
+    //#ANALOG JOYSTICKS
+    sensordata["L_POT"] = analogRead(L_POT);
+    sensordata["R_POT"] = analogRead(R_POT);
+
+    serializeJson(sensordata, Serial);
     delay(1);
 }
 
@@ -107,13 +118,14 @@ void setup() {
     /*
     pinMode(L_X, INPUT);
     pinMode(L_Y, INPUT);
-    pinMode(L_PIN, INPUT_PULLUP);
     pinMode(R_X, INPUT);
     pinMode(R_Y, INPUT);
-    pinMode(R_PIN, INPUT_PULLUP);
     pinMode(L_POT, INPUT);
     pinMode(R_POT, INPUT);
     */
+    pinMode(L_PIN, INPUT_PULLUP);
+    pinMode(R_PIN, INPUT_PULLUP);
+
     pinMode(L_Trig, INPUT_PULLUP);
     pinMode(R_Trig, INPUT_PULLUP);  
 
@@ -121,7 +133,7 @@ void setup() {
     LJOY.calibrate(0, 1022, 100);
     RJOY.calibrate(0, 1022, 100);
     
-    Serial.begin(9600);
+    Serial.begin(115200);
     while (!Serial) continue;
 }
 

@@ -8,8 +8,8 @@
 
 void setup() {
 
-  Serial.begin(9600);
-  Serial2.begin(9600);
+  Serial.begin(115200);
+  Serial2.begin(115200);
   // Initialize "debug" serial port
   // The data rate must be much higher than the "link" serial port
   pinMode(BUILTIN_LED, OUTPUT);
@@ -35,10 +35,18 @@ void loop() {
       // Print the values
       // (we must use as<T>() to resolve the ambiguity)
       digitalWrite(BUILTIN_LED, HIGH);
-      Serial.print("| L_JOY_SINGLE_READ: ");
+      Serial.print("| LJOY_SINGLE_READ: ");
       Serial.print(sensordata["L_JOY_SINGLEREAD"].as<String>());
-      Serial.print("| L_JOY_MULTIPLE_READ: ");
+      Serial.print("| LJOY_MULTIPLE_READ: ");
       Serial.print(sensordata["L_JOY_MULTIPLEREAD"].as<String>());
+      Serial.print("| RJOY_SINGLE_READ: ");
+      Serial.print(sensordata["R_JOY_SINGLEREAD"].as<String>());
+      Serial.print("| RJOY_MULTIPLE_READ: ");
+      Serial.print(sensordata["R_JOY_MULTIPLEREAD"].as<String>());
+      Serial.print("| L_TRIG: ");
+      Serial.print(sensordata["L_TRIG"].as<bool>());
+      Serial.print("| R_TRIG: ");
+      Serial.print(sensordata["R_TRIG"].as<bool>());
       Serial.println(" |");
       digitalWrite(BUILTIN_LED, LOW);
     } 
