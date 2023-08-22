@@ -10,7 +10,7 @@
 #include <Joystick.h>
 #include <AxisJoystick.h>
 //#include <RF24.h>
-#include <SPI.h>
+//#include <SPI.h>
 
 // Pin assingments
 
@@ -38,7 +38,7 @@ AxisJoystick LJOY(L_PIN, L_X, L_Y);  //Left Joystick
 AxisJoystick RJOY(R_PIN, R_X, R_Y);  //Right Joystick
 
 
-void Json_Serial_Communication() {
+void Json_Test_Serial_Communication() {
     // Values we want to transmit
   long timestamp = millis();
   int value = analogRead(1);

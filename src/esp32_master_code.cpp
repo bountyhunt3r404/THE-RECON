@@ -1,10 +1,27 @@
+/*
+          MADE BY BOUNTY
+    THIS CODE IS FOR ESP-32
+          
+*/
+
 #include <Arduino.h>
 //#include <SPI.h>
 #include <ArduinoJson.h>
 
-// JSON Doc
+// JSON Document to store incoming data from NANO
+StaticJsonDocument<500> sensordata;
 
 
+bool dataok() {
+  DeserializationError err = deserializeJson(sensordata, Serial2);
+  if (err == DeserializationError::Ok) {
+    return true;
+  }
+
+  else {
+    return false;
+  }
+}
 
 void setup() {
 
@@ -23,14 +40,7 @@ void loop() {
   // Check if the other Arduino is transmitting
   if (Serial2.available()) 
   {
-    // Allocate the JSON document
-    // This one must be bigger than the sender's because it must store the strings
-    StaticJsonDocument<500> sensordata;
-
-    // Read the JSON document from the "link" serial port
-    DeserializationError err = deserializeJson(sensordata, Serial2);
-
-    if (err == DeserializationError::Ok)
+    if (dataok())
     {
       // Print the values
       // (we must use as<T>() to resolve the ambiguity)
