@@ -108,8 +108,21 @@ void json_over_serial_communication() {
     sensordata["L_POT"] = analogRead(L_POT);
     sensordata["R_POT"] = analogRead(R_POT);
 
-    serializeJson(sensordata, Serial);
-    delay(1);
+    String output;
+    serializeJson(sensordata, output);
+
+    // Calculate checksum
+    uint8_t checksum = 0;
+    for (int i = 0; i < output.length(); i++) {
+        checksum ^= output[i];
+    }
+
+    // Send data and checksum
+    Serial.print(output);
+    Serial.print("@");
+    Serial.println(checksum, HEX);
+
+    delay(100);
 }
 
     
